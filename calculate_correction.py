@@ -1,16 +1,19 @@
-'''Calculates correction to the upper bound using blocked trajectory data. Uses
+'''
+Calculates correction to the upper bound using blocked trajectory data. Uses
 the scaled cumulant generating function representation to get this correction
 as described in:
 
 Jacobson, D. & Whitelam, S. Direct evaluation of dynamical large-deviation 
 rate functions using a variational ansatz. arXiv:1903.06098 [cond-mat] (2019).
 
+See --input command line argument. Data formatting is two columns. First 
+column is the intensive observable minus the mean value, a - a_0. The second 
+column is the intensive log likelihood ratio minus the mean, q - q_0.
+
 See also:
 
 Rohwer, C. M., Angeletti, F. & Touchette, H. Convergence of large-deviation 
 estimators. Phys. Rev. E 92, 052104 (2015).
-
-For data formatting info see command line args and the read_data method.
 '''
 
 import argparse
@@ -313,26 +316,30 @@ def get_args():
     '''Gets command line args.
 
     Returns:
-        args: command line arguments
+        args: cfommand line arguments
     '''
-    formatter = argparse.ArgumentDefaultsHelpFormatter
+    class Formatter(argparse.ArgumentDefaultsHelpFormatter,
+                    argparse.RawDescriptionHelpFormatter):
+        pass
     parser = argparse.ArgumentParser(description = __doc__,
-                                     formatter_class = formatter)
+                                     formatter_class = Formatter)
     parser.add_argument("block_time", type =float, 
                         help = "the length of the blocks, increase this to "
                         "obtain convergence")
     parser.add_argument("--input", default = "correction_data.txt",
                         help = "name of data file")
+    parser.add_argument("--output", default = "correction_out.txt",
+                        help = "name of output file")
     parser.add_argument("--N_data_sets", type = int, default = 5,
                         help = "use this to split data into multiple sets to "
                         "calculate statistical errors. See equations 30 and "
                         "31.")
     parser.add_argument("--k_delta_a_start", type = float, default = -3.0,
                         help = "start value for k_delta_a scan used to find "
-                        "k_\tilde{a}_0. See equation 28 in paper.")
+                        "k_\\tilde{a}_0. See equation 28 in paper.")
     parser.add_argument("--k_delta_a_end", type = float, default = 3.0,
                         help = "end value for k_delta_a scan used to find "
-                        "k_\tilde{a}_0. See equation 28 in paper.")
+                        "k_\\tilde{a}_0. See equation 28 in paper.")
     parser.add_argument("--k_delta_a_points", type = int, default = 6001,
                         help = "points to use between k_a_start and k_a_end. "
                         "Convergence parameter, increase until does not "
@@ -390,12 +397,18 @@ def main():
     max_rate_function = tmp[4]
 
     print("\ncorrection = {} +- {}".format(correction, correction_error))
-    print("rate function = {} +- {}".format(rate_function,
-                                            rate_function_error))
-    print("max rate function = {}\n".format(max_rate_function))
-    if rate_function > args.alpha * max_rate_function:
+    print("correction rate function = {} +- {}".format(rate_function,
+                                                       rate_function_error))
+    print("max correction rate function = {}\n".format(max_rate_function))
+    convergence = rate_function < args.alpha * max_rate_function
+    if not convergence:
         print("WARNING: rate_function > alpha * max_rate_function, cannot " +
               "trust estimate")
+    with open(args.output, "w") as f:
+        f.write("# 0:correction 1:correction_error " +
+                "2:passed_linearization_check\n")
+        f.write("{} {} {}\n".format(correction, correction_error,
+                                    int(convergence)))
     
 if __name__ == "__main__":
     main()
