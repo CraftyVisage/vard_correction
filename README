@@ -1,0 +1,15 @@
+Calculates correction to the upper bound using blocked trajectory data. Uses
+the scaled cumulant generating function representation to get this correction
+as described in:
+
+Jacobson, D. & Whitelam, S. Direct evaluation of dynamical large-deviation
+rate functions using a variational ansatz. arXiv:1903.06098 [cond-mat] (2019).
+
+See --input command line argument. Data formatting is two columns. First
+column is the intensive observable minus the mean value, a - a_0. The second
+column is the intensive log likelihood ratio minus the mean, q - q_0.
+
+See also:
+
+Rohwer, C. M., Angeletti, F. & Touchette, H. Convergence of large-deviation
+estimators. Phys. Rev. E 92, 052104 (2015).
