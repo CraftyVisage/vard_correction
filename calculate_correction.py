@@ -84,7 +84,7 @@ def read_data(args):
             deltas
     '''
     # 0:delta_a 1:delta_q
-    data = np.loadtxt(args.input, skiprows = 1)
+    data = np.loadtxt(args.input)
     blocked_delta_a_array = data[:, 0]
     blocked_delta_q_array = data[:, 1]
     return blocked_delta_a_array, blocked_delta_q_array
