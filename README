@@ -27,7 +27,7 @@ the scaled cumulant generating function representation to get this correction
 as described in:
 
 Jacobson, D. & Whitelam, S. Direct evaluation of dynamical large-deviation
-rate functions using a variational ansatz. arXiv:1903.06098 [cond-mat] (2019).
+rate functions using a variational ansatz. Phys. Rev. E 100, 052139 (2019).
 
 See --input command line argument. Data formatting is two columns. First
 column is the intensive observable minus the mean value, a - a_0. The second
